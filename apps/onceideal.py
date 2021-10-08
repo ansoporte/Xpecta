@@ -56,6 +56,3 @@ def app():
     tactic = st.selectbox('Escriba o seleccione la táctica de juego', list_tactics)
     if ('--Buscar--' not in tactic) and (len(leagues)!=0):
         dream_team(tactic, df, df_gk, season, leagues, min_minutes, nationality, age)
-        test=pd.read_csv('pesos.csv',sep=';')
-        test.drop(columns='Unnamed: 0',inplace=True)
-        download_button(test,'prueba.xlsx','Prueba')
