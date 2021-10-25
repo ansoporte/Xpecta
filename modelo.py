@@ -353,7 +353,7 @@ for key, value in dict_var_rad_esp.items():
 @st.cache
 def base_jugadores():
 
-    df = pd.read_csv('Data/Jugadores0410.csv',header=0,delimiter=';',decimal=',',na_values='-',encoding="utf-8")
+    df = pd.read_csv('Data/Jugadores2510.csv',header=0,delimiter=';',decimal=',',na_values='-',encoding="utf-8")
     df.drop(columns=['Unnamed: 0'],inplace=True)
     df = df.loc[~df.Name.str.contains('H. Palacios',na=True)]
     df['Nationality']=df['Nationality'].fillna('---')
@@ -381,7 +381,7 @@ def base_jugadores():
 def base_arqueros():
     posicion='Arquero'
     w = weights(posiciones[posicion])
-    df = pd.read_csv('Data/Arqueros0410.csv',header=0,delimiter=';',decimal=',',na_values='-',encoding="utf-8")
+    df = pd.read_csv('Data/Arqueros2510.csv',header=0,delimiter=';',decimal=',',na_values='-',encoding="utf-8")
     df.drop(columns=['Unnamed: 0'],inplace=True)
     df = df.loc[~df.Name.str.contains('H. Palacios',na=True)]
     df['Nationality']=df['Nationality'].fillna('---')
