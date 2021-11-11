@@ -203,7 +203,7 @@ def app():
         > Mapa de tiros por partido con goles esperados 
         """
     )
-    liga = st.selectbox("Seleccione la Liga de la cual quiere ver los partidos",ligas.keys())
+    liga = st.selectbox("Seleccione la Liga de la cual quiere ver los partidos",list(ligas.keys()))
     df=extract_matches(ligas[liga],season_2021)
     df=df[df['available_events']==True]
     lista_partidos = df['match_date'].str.replace('-','/').str.split(' ').str[0]+' - '+df['match_name']
