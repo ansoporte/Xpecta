@@ -417,7 +417,8 @@ def weights(pos, print_checks=False):
     esp_eng = {**players_esp_eng, **gk_esp_eng}
 
     df = pd.read_csv('pesos.csv',sep=';')
-    df.drop(columns=['Unnamed: 0'],inplace=True)
+    if 'Unnamed: 0' in df.columns:
+        df.drop(columns=['Unnamed: 0'],inplace=True)
 
     df['Posicion python'] = df['Posicion'].map(dict_pos)
     df['Translated variables'] = df['Variable'].map(esp_eng)
