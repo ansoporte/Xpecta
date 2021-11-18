@@ -16,7 +16,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import math
-
+import seaborn as sns
 mpl.rcParams['figure.figsize'] = 12, 8
 
 ##### Font Properties
@@ -1077,3 +1077,52 @@ def history_streamlit(df_radar, df_raw, w, position):
     # print(df_rad)
     # print(df_rad_raw)
     radar_streamlit(df_rad, df_rad_raw, position, w, N_variables)
+
+def matriz_de_pases(eventos,equipo):
+    
+    eventos = eventos[eventos['team_name']==equipo]
+    acciones = ['Attacking pass accurate', 'Accurate key pass']
+    posiciones = ['LD', 'LDM', 'LM', 'LAM', 'LF', 'LCD', 'LCDM', 'LCM', 'LCAM', 'LCF', 'GK', 'CD', 'CDM', 'CM', 'CAM', 'CF', 'RCD', 'RCDM', 'RCM', 'RCAM', 'RCF', 'RD', 'RDM', 'RM', 'RAM', 'RF']
+
+    pases = eventos[eventos[ 'action_name'].isin(acciones)]
+    
+    jugadores_totales = eventos[eventos['action_name']=='Average position Full match'][['player_name','pos_x', 'pos_y']]
+    jugadores_iniciales = eventos[(eventos['action_name'].isin(posiciones))&(eventos['half']==1)&(eventos['second']==0)][['player_name']]
+    jugadores = pd.merge(jugadores_iniciales, jugadores_totales, on='player_name', how= 'left'  )
+    pases_entre=pases.groupby([ 'player_name', 'opponent_name']).id.count().reset_index()
+    pases_entre=pd.merge(pases_entre, jugadores, on ='player_name', how = 'left' )
+    
+    pases_entre=pd.merge(pases_entre, jugadores, left_on ='opponent_name', right_on='player_name', how = 'left' ,suffixes=('','_final') ).dropna().reset_index().drop(columns=['index', 'player_name_final'])
+    
+    pases['player_name']=pases['player_name'].apply(borrar_apellido)
+    pases['opponent_name']=pases['opponent_name'].apply(borrar_apellido)
+    
+    pases_entre=pases_entre[pases_entre['id']>1]
+    tabla= pd.crosstab(pases['player_name'], pases['opponent_name'])
+    tablalabels=tabla.replace(to_replace=0, value='')
+    fig2=plt.figure()
+    fig2.set_size_inches(20, 14)
+
+
+    color_map = sns.cubehelix_palette(start=.0, rot=-.7, as_cmap=True)
+    
+    sns.heatmap(tabla, annot=tablalabels,fmt='',  cbar=False,cmap=color_map.reversed())
+    plt.tick_params(axis='both', which='major', labelsize=10, labelbottom = False, bottom=False, top = False, labeltop=True)
+    plt.xticks(rotation=45,ha='left')
+    plt.tight_layout()
+    plt.ylabel('')
+    plt.xlabel('')
+    
+    st.pyplot(fig2)
+
+def borrar_apellido(nombre):
+    etiqueta=''
+    nombres=str(nombre).split(' ')
+    try:
+        if len(nombres)==2:
+            etiqueta= nombres[0][0]+'. '+ nombres[1]
+        else:
+            etiqueta = nombres[0][0] +'. '+ nombres[-2]
+        return etiqueta
+    except:
+        v=1
