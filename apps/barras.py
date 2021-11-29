@@ -17,9 +17,7 @@ def app():
         teams= extract_teams(ligas[liga])
         equipo = st.selectbox('Seleccionar equipo', ['Seleccionar']+list(teams['name']),0 )
         if equipo != 'Seleccionar':
-            part = partidos_liga(teams,ligas[liga])
-
-
+            part = pd.read_csv(f'MatchMatch_{ligas[liga]}.csv')
             plotear_xG(part,equipo)
             plotear_OpxG(part,equipo)
 

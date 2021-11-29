@@ -35,7 +35,7 @@ def show_match_events(match_id):
     
 @st.cache
 def extract_matches(tournament_id,season_id):
-    url=f'http://service.instatfootball.com/feed.php?id=819845&key=T4bwoXqr&tpl=35&tournament_id={tournament_id}&season_id={season_id}&date_start=2021-07-01&date_end=&lang_id=1&lang=en&format=csv'
+    url=f'http://service.instatfootball.com/feed.php?id=819845&key=T4bwoXqr&tpl=35&tournament_id={tournament_id}&season_id={season_id}&date_start=&date_end=&lang_id=1&lang=en&format=csv'
     try:
         response=requests.get(url,headers=headers)
         soup=BeautifulSoup(response.content,'lxml')
@@ -167,6 +167,7 @@ def partidos_liga(equipos,tournament_id=217,season_id=27,fecha_inicio='2021-07-0
     return part
 
 def plotear_xG(part,equipo):
+    jornada_max=part.loc[part['Equipo']==equipo,'Jornada'].max()
     fig2=plt.figure(figsize=(10,2))
     per25=np.percentile(part.groupby('Equipo').mean()['xG'],25)
     per50=np.percentile(part.groupby('Equipo').mean()['xG'],50)
@@ -185,22 +186,23 @@ def plotear_xG(part,equipo):
             plt.scatter(row['xG'],1,color='grey',zorder=10)
     plt.title("xG")
     plt.tick_params(left = False, right = False , labelleft = False ,labelbottom = True, bottom = True)
-    plt.axvline(x=part.loc[(part['Jornada']==part['Jornada'].max())&(part['Equipo']==equipo),'xG'].values[0],linestyle='--',color='white',zorder=10,label="Ultimo partido")
+    plt.axvline(x=part.loc[(part['Jornada']==jornada_max)&(part['Equipo']==equipo),'xG'].values[0],linestyle='--',color='white',zorder=10,label="Ultimo partido")
     plt.axvspan(0, per25, color='red', alpha=0.5)
 
-    if part.loc[(part['Jornada']==part['Jornada'].max())&(part['Equipo']==equipo),'xG'].values[0] < part.groupby('Equipo').mean()['xG'].min():
-        xop_min2= part.loc[(part['Jornada']==part['Jornada'].max())&(part['Equipo']==equipo),'xG'].values[0] - 0.05
+    if part.loc[(part['Jornada']==jornada_max)&(part['Equipo']==equipo),'xG'].values[0] < part.groupby('Equipo').mean()['xG'].min():
+        xop_min2= part.loc[(part['Jornada']==jornada_max)&(part['Equipo']==equipo),'xG'].values[0] - 0.05
     else:
         xop_min2=part.groupby('Equipo').mean()['xG'].min() - 0.05
-    if part.loc[(part['Jornada']==part['Jornada'].max())&(part['Equipo']==equipo),'xG'].values[0] < part.groupby('Equipo').mean()['xG'].max():
+    if part.loc[(part['Jornada']==jornada_max)&(part['Equipo']==equipo),'xG'].values[0] < part.groupby('Equipo').mean()['xG'].max():
         xop_max2=part.groupby('Equipo').mean()['xG'].max() + 0.05
     else:
-        xop_max2= part.loc[(part['Jornada']==part['Jornada'].max())&(part['Equipo']==equipo),'xG'].values[0] + 0.05
+        xop_max2= part.loc[(part['Jornada']==jornada_max)&(part['Equipo']==equipo),'xG'].values[0] + 0.05
     #plt.legend(loc=3)
     plt.xlim((xop_min2,xop_max2))
     st.pyplot(fig2)
 
 def plotear_OpxG(part,equipo):
+    jornada_max=part.loc[part['Equipo']==equipo,'Jornada'].max()
     fig=plt.figure(figsize=(10,2))
     per25=np.percentile(part.groupby('Equipo').mean()['Opponent xG'],25)
     per50=np.percentile(part.groupby('Equipo').mean()['Opponent xG'],50)
@@ -219,16 +221,16 @@ def plotear_OpxG(part,equipo):
             plt.scatter(xg,1,color='grey',zorder=10)
     plt.title("Opponent xG")
     plt.tick_params(left = False, right = False , labelleft = False ,labelbottom = True, bottom = True)
-    plt.axvline(x=part.loc[(part['Jornada']==part['Jornada'].max())&(part['Equipo']==equipo),'Opponent xG'].values[0],linestyle='--',color='white',zorder=10,label='Ultimo partido')
+    plt.axvline(x=part.loc[(part['Jornada']==jornada_max)&(part['Equipo']==equipo),'Opponent xG'].values[0],linestyle='--',color='white',zorder=10,label='Ultimo partido')
     plt.axvspan(0, per25, color='green', alpha=0.5)
-    if part.loc[(part['Jornada']==part['Jornada'].max())&(part['Equipo']==equipo),'Opponent xG'].values[0] < part.groupby('Equipo').mean()['Opponent xG'].min():
-        xop_min= part.loc[(part['Jornada']==part['Jornada'].max())&(part['Equipo']==equipo),'Opponent xG'].values[0] - 0.05
+    if part.loc[(part['Jornada']==jornada_max)&(part['Equipo']==equipo),'Opponent xG'].values[0] < part.groupby('Equipo').mean()['Opponent xG'].min():
+        xop_min= part.loc[(part['Jornada']==jornada_max)&(part['Equipo']==equipo),'Opponent xG'].values[0] - 0.05
     else:
         xop_min=part.groupby('Equipo').mean()['Opponent xG'].min() - 0.05
-    if part.loc[(part['Jornada']==part['Jornada'].max())&(part['Equipo']==equipo),'Opponent xG'].values[0] < part.groupby('Equipo').mean()['Opponent xG'].max():
+    if part.loc[(part['Jornada']==jornada_max)&(part['Equipo']==equipo),'Opponent xG'].values[0] < part.groupby('Equipo').mean()['Opponent xG'].max():
         xop_max= part.groupby('Equipo').mean()['Opponent xG'].max() + 0.05
     else:
-        xop_max=part.loc[(part['Jornada']==part['Jornada'].max())&(part['Equipo']==equipo),'Opponent xG'].values[0] + 0.05
+        xop_max=part.loc[(part['Jornada']==jornada_max)&(part['Equipo']==equipo),'Opponent xG'].values[0] + 0.05
     plt.xlim((xop_min,xop_max))
     plt.gca().invert_xaxis()
     #plt.legend(loc=3)

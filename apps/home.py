@@ -11,7 +11,7 @@ def app():
     #
     """)
     image = Image.open('Imagenes/nacional.png')
-    col1, col2 = st.beta_columns([1, 1])
+    col1, col2 = st.columns([1, 1])
     col1.image(image)
     col2.write("""
     #
