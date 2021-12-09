@@ -116,6 +116,6 @@ def app():
             st.write("""
                 ## Tabla con datos
             """)
-
-            disp_df=ordered_df.sort_values('Goles',ascending=False)[['Goles','xG']]
-            st.dataframe(disp_df.style.format({'Goals':'{:.0f}','xG':'{:.2f}'}))
+            ordered_df['Dif (Goles-xG)']=ordered_df['Goles']-ordered_df['xG']
+            disp_df=ordered_df.sort_values('Goles',ascending=False)[['Goles','xG','Dif (Goles-xG)']]
+            st.dataframe(disp_df.style.format({'Goals':'{:.0f}','xG':'{:.2f}','Dif (Goles-xG)':'{:.2f}'}))
